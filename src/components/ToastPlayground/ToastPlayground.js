@@ -4,17 +4,36 @@ import Toast from "../Toast";
 import Button from "../Button";
 
 import styles from "./ToastPlayground.module.css";
+import ToastShelf from "../ToastShelf/ToastShelf";
 
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
 function ToastPlayground() {
-  const [inputMessage, setInputMessage] = React.useState("Hello");
+  const [inputMessage, setInputMessage] = React.useState("");
   const [selectedVariant, setSelectedVariant] = React.useState("notice");
 
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [toasts, setToasts] = React.useState([]);
 
-  const handleDismiss = () => {
-    setIsVisible(false);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const nextToasts = [
+      ...toasts,
+      {
+        id: crypto.randomUUID(),
+        message: inputMessage,
+        variant: selectedVariant,
+      },
+    ];
+
+    setToasts(nextToasts);
+
+    // reset form
+    setInputMessage("");
+    setSelectedVariant("notice");
+  };
+
+  const handleDismiss = (id) => {
+    setToasts(toasts.filter((toast) => toast.id !== id));
   };
 
   return (
@@ -24,63 +43,54 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      {isVisible && (
-        <Toast variant={selectedVariant} handleDismiss={handleDismiss}>
-          {inputMessage}
-        </Toast>
-      )}
+      <ToastShelf toasts={toasts} handleDismiss={handleDismiss} />
 
       <div className={styles.controlsWrapper}>
-        <div className={styles.row}>
-          <label
-            htmlFor="message"
-            className={styles.label}
-            style={{ alignSelf: "baseline" }}
-          >
-            Message
-          </label>
-          <div className={styles.inputWrapper}>
-            <textarea
-              id="message"
-              className={styles.messageInput}
-              onChange={(event) => setInputMessage(event.target.value)}
+        <form onSubmit={handleSubmit}>
+          <div className={styles.row}>
+            <label
+              htmlFor="message"
+              className={styles.label}
+              style={{ alignSelf: "baseline" }}
             >
-              {inputMessage}
-            </textarea>
+              Message
+            </label>
+            <div className={styles.inputWrapper}>
+              <textarea
+                id="message"
+                className={styles.messageInput}
+                value={inputMessage}
+                onChange={(event) => setInputMessage(event.target.value)}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className={styles.row}>
-          <div className={styles.label}>Variant</div>
-          <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-            {VARIANT_OPTIONS.map((variant) => (
-              <label htmlFor={`variant-${variant}`} key={variant}>
-                <input
-                  id={`variant-${variant}`}
-                  type="radio"
-                  name="variant"
-                  value={variant}
-                  checked={selectedVariant === variant}
-                  onChange={() => setSelectedVariant(variant)}
-                />
-                {variant}
-              </label>
-            ))}
+          <div className={styles.row}>
+            <div className={styles.label}>Variant</div>
+            <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
+              {VARIANT_OPTIONS.map((variant) => (
+                <label htmlFor={`variant-${variant}`} key={variant}>
+                  <input
+                    id={`variant-${variant}`}
+                    type="radio"
+                    name="variant"
+                    value={variant}
+                    checked={selectedVariant === variant}
+                    onChange={() => setSelectedVariant(variant)}
+                  />
+                  {variant}
+                </label>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className={styles.row}>
-          <div className={styles.label} />
-          <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-            <Button
-              onClick={() => {
-                setIsVisible(true);
-              }}
-            >
-              Pop Toast!
-            </Button>
+          <div className={styles.row}>
+            <div className={styles.label} />
+            <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
+              <Button>Pop Toast!</Button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
