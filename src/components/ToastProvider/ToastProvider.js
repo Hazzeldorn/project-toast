@@ -29,12 +29,12 @@ function ToastProvider({ children }) {
   }
 
   React.useEffect(() => {
-    document.addEventListener("keydown", handleEscapeKey);
+    window.addEventListener("keydown", handleEscapeKey);
 
     return () => {
-      document.removeEventListener("keydown", handleEscapeKey);
+      window.removeEventListener("keydown", handleEscapeKey);
     };
-  });
+  }, []);
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, dismissToast }}>

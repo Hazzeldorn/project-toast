@@ -56,19 +56,22 @@ function ToastPlayground() {
           <div className={styles.row}>
             <div className={styles.label}>Variant</div>
             <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-              {VARIANT_OPTIONS.map((variant) => (
-                <label htmlFor={`variant-${variant}`} key={variant}>
-                  <input
-                    id={`variant-${variant}`}
-                    type="radio"
-                    name="variant"
-                    value={variant}
-                    checked={selectedVariant === variant}
-                    onChange={() => setSelectedVariant(variant)}
-                  />
-                  {variant}
-                </label>
-              ))}
+              {VARIANT_OPTIONS.map((option) => {
+                const id = `variant-${option}`;
+                return (
+                  <label htmlFor={id} key={id}>
+                    <input
+                      id={id}
+                      type="radio"
+                      name="variant"
+                      value={option}
+                      checked={selectedVariant === option}
+                      onChange={() => setSelectedVariant(option)}
+                    />
+                    {option}
+                  </label>
+                );
+              })}
             </div>
           </div>
 
